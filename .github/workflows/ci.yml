@@ -1,0 +1,42 @@
+name: C++ storage
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  linux:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+      - name: Install compiler and Arrow / Parquet
+        run: scripts/bootstrap_ubuntu.sh
+      - name: Check formatting
+        run: scripts/format.sh --check
+      - name: Debug build and tests
+        env:
+          CXX: clang++-18
+          CMAKE_GENERATOR: Ninja
+        run: |
+          scripts/build_debug.sh
+          scripts/test.sh
+      - name: Address and undefined behavior sanitizers
+        env:
+          CXX: clang++-18
+          CMAKE_GENERATOR: Ninja
+          QUANTA_BUILD_DIR: build/sanitizers
+          ASAN_OPTIONS: detect_leaks=1:halt_on_error=1
+          UBSAN_OPTIONS: print_stacktrace=1:halt_on_error=1
+        run: |
+          scripts/build_debug.sh -DQUANTA_ENABLE_ASAN=ON -DQUANTA_ENABLE_UBSAN=ON
+          scripts/test.sh build/sanitizers
+      - name: Release build and tests, including benchmark compilation
+        env:
+          CXX: clang++-18
+          CMAKE_GENERATOR: Ninja
+        run: |
+          scripts/build_release.sh -DQUANTA_BUILD_BENCHMARKS=ON
+          scripts/test.sh build/release
