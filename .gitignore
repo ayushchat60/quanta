@@ -67,3 +67,11 @@ vcpkg_installed/
 # test output & cache
 Testing/
 .cache/
+
+# Local storage fixtures, sanitizer profiles, and benchmark output
+*.parquet
+*.profraw
+*.profdata
+/benchmarks/results/*.json
+/cmake-build-*/
+.DS_Store

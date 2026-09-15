@@ -1,0 +1,3 @@
+Checks: '-*,bugprone-use-after-move,bugprone-dangling-handle,bugprone-sizeof-expression,modernize-use-nullptr,modernize-use-override,performance-for-range-copy,performance-unnecessary-copy-initialization,readability-container-size-empty'
+WarningsAsErrors: '*'
+HeaderFilterRegex: '(include/quanta|src|app)/.*'
